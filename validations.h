@@ -1,4 +1,4 @@
-#include <string.h>
+
 //
 ///*return 0 if the syntax of the line is good , 1 if the line is null ,
 //  2 if the line including chars thet not letters*/

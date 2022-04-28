@@ -1,0 +1,37 @@
+לסדר את ה #includs
+לעשות אינם לפלט של השגיאות
+לדייק בגדלים של המערכים והסטרינגים
+מאקרויים לשמות הקורסים ולגדלים קבועים
+לייעל את הסאלאכט והסט
+בדיקת תקינות קלט בשאילתה
+לעדכן חזרה בקובץ
+yosef,dagan,457812469,Computer Networks,100
+yosef,dagan,457812469,CS Fundamentals,100
+shoki,tamir,874021369,Computer Networks,68
+beni,sharf,523697440,C language,72
+yosef,dagan,457812469,C language,100
+shoki,tamir,874021369,CS Fundamentals,97
+yosef,dagan,457812469,C language,85
+
+set first name =barak, second name =zur, id =245102598, C language=87
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 
 
-#define MAX_LINE  256
+#define MAX_LINE  255
 #define COURSES  3
 
 typedef struct student {

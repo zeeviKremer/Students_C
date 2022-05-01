@@ -5,8 +5,3 @@
 #include "studentManager.h"
 #include "validations.h"
 #include "query.h"
-
-
-
-
-

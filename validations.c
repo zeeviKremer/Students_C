@@ -6,23 +6,25 @@
   2 if the line including chars thet not letters*/
 int isChars(char* line)
 {
-    int rez = 0, i = 0;
+    int rez = 0,cauntChars = 0, i = 0;
     if (line == NULL)
     {
-        rez = 1;
-        return rez;
+        return  1;        
     }
     else
     {
         while (line[i] != '\0')
         {
-            if (!(line[i] >= 'A' && line[i] <= 'Z' || line[i] >= 'a' && line[i] <= 'z'))
+            if (!(line[i] >= 'A' && line[i] <= 'Z' || line[i] >= 'a' && line[i] <= 'z' || line[i] == ' '))
             {
-                rez = 2;
-                return rez;
+                return 2;
             }
+            else if (line[i] >= 'A' && line[i] <= 'Z' || line[i] >= 'a' && line[i] <= 'z')
+                cauntChars++;
             i++;
         }
+        if(cauntChars == 0)
+            return 2;
     }
 
     return rez;
@@ -120,64 +122,100 @@ int isScore(char* line)
 
 int checkNamesData(char* data)
 {
-    int i = 0, rez = 1;
+    int i = 0;
     while (data[i] != '\0')
     {
-        if (data[i] < 'a' || data[i]>'z')
-            rez = 0;
+        if (!(data[i] >= 'a' && data[i]<='z') && !(data[i] >= 'A' && data[i] <= 'Z') && data[i] != ' ')
+            return  0;
         i++;
     }
-    return rez;
+    return 1;
 }
 
 int checkIdData(char* data)
 {   
-    int i = 0, rez = 1, caunt = 0;
+    int i = 0 , caunt = 0;
     while (data[i] != '\0')
     {
         if (data[i] < '0' || data[i]>'9')
-            rez = 0;
+            return 0;
         i++;
         caunt++;
     }
     if (caunt != 9)
-        rez = 0;
-    return rez;
+        return 0;
+    return 1;
 }
 
 int checkScoresData(char* data)
 {
-    int scor, rez = 1;
+    int i = 0, scor, caunt = 0;       
+    while (data[i] != '\0')
+    {        
+        if (i == 0)
+        {
+            if (data[i] >= '0' && data[i] <= '9')
+            {
+                caunt++;
+                i++;
+            }
+            else if (data[0] == '-' && data[1] == '1')
+            {
+                i = 2;
+                while (data[i] != '\0')
+                {
+                    if (data[i] != ' ')
+                        return 0;
+                    i++;
+                }
+                return 1;
+
+            }
+            else
+                return 0;
+        }  
+        else
+        {
+            if (!(data[i] >= '0' && data[i] <= '9') && data[i] != ' ')
+                return 0;                
+            else if (data[i] >= '0' && data[i] <= '9')
+                caunt++;
+            i++;
+        }
+    }        
     scor = atoi(data);
-    if (scor < -1 || scor > 100)
-        rez = 0;
-    return rez;
+    if (scor < 0 || scor > 100)
+        return 0;
+    else if (scor > 99 && caunt > 3)
+        return 0;
+    else if ((scor > 9 && scor < 100) && caunt > 2)
+        return 0;
+    else if ((scor >=-1 && scor < 10) && caunt > 1)
+        return 0;
+    
+    return 1;
 }
 
 
-int checkFildName(char* queryRow, char* fild)
+int checkFildName(char* queryRow, char* fild,int flag)
 {
     char* temp;
-    int index = 0, range, i = 0, j = 0, isProper = 0;
+    int index = 0, cauntChars, i = 0, j = 0, isProper = 0;
     while (queryRow[index] == ' ')
         index++;
-    range = index;
-    while (queryRow[range] >= 'a' && queryRow[range] <= 'z' || queryRow[range] >= 'A' && queryRow[range] <= 'Z' || queryRow[range] == ' ')
-        range++;
-    temp = (char*)malloc(sizeof(char) * range - index + 1);
+    cauntChars = index;
+    while (queryRow[cauntChars] >= 'a' && queryRow[cauntChars] <= 'z' || queryRow[cauntChars] >= 'A' && queryRow[cauntChars] <= 'Z' || queryRow[cauntChars] == ' ')
+        cauntChars++;
+    if (cauntChars == 0)
+        return 0;
+    temp = (char*)malloc(sizeof(char) * cauntChars - index + 1);
     if (temp == NULL)
     {
         printf("problem in memory");
         return 0;
-    }
-    /*fild = (char*)malloc(sizeof(char) * range - index + 1);
-    if (fild == NULL)
-    {
-        printf("problem in memory");
-        return 0;
-    }*/
-    strncpy(temp, queryRow + index, range - index);
-    temp[range - index] = '\0';
+    }   
+    strncpy(temp, queryRow + index, cauntChars - index);
+    temp[cauntChars - index] = '\0';
     while (temp[i] != '\0')
     {
         if (temp[i] != ' ')
@@ -197,29 +235,52 @@ int checkFildName(char* queryRow, char* fild)
         i++;
     }
     fild[j] = '\0';
-    strncpy(queryRow, queryRow + range, strlen(queryRow) - range);
-    strcpy(queryRow + strlen(queryRow) - range, "\0");
+    if (flag == 0)
+    {
+        if (strcmp(fild, "firstname") != 0 && strcmp(fild, "secondname") && strcmp(fild, "id") && strcmp(fild, "clanguage") && strcmp(fild, "computernetworks") && strcmp(fild, "csfundamentals") && strcmp(fild, "average"))
+            return 0;
+    }  
+    else if(flag == 1)
+    {
+        if (strcmp(fild,  "firstname") != 0)
+            return 0;
+    }
+    else if (flag == 2)
+    {
+        if (strcmp(fild, "secondname") != 0)
+            return 0;
+    }
+    else if (flag == 3)
+    {
+        if (strcmp(fild, "id") != 0)
+            return 0;
+    }
+
+    strncpy(queryRow, queryRow + cauntChars, strlen(queryRow) - cauntChars);
+    strcpy(queryRow + strlen(queryRow) - cauntChars, "\0");
     return 1;
 }
 
-int checkOperator(char* queryRow, char* operator)
+int checkOperator(char* queryRow, char* operator,int flag)
 {
     char* temp;
-    int index = 0, range, i, j, rez = 1;
+    int index = 0, cauntChars, i, j;
     while (queryRow[index] == ' ')
-        index++;
-    range = index;
-    while (queryRow[range] == '=' || queryRow[range] == '!' || queryRow[range] == '<' || queryRow[range] == '>' || queryRow[range] == ' ')
-        range++;
+        index++;    
+    cauntChars = index;
+    while (queryRow[cauntChars] == '=' || queryRow[cauntChars] == '!' || queryRow[cauntChars] == '<' || queryRow[cauntChars] == '>' || queryRow[cauntChars] == ' ')
+        cauntChars++;
+    if (cauntChars == 0)
+        return 0;
     i = 0, j = 0;
-    temp = (char*)malloc(sizeof(char) * range - index + 1);
+    temp = (char*)malloc(sizeof(char) * cauntChars - index + 1);
     if (temp == NULL)
     {
         printf("problem in memory");
         return 0;
     }
-    strncpy(temp, queryRow + index, range - index);
-    temp[range - index] = '\0';
+    strncpy(temp, queryRow + index, cauntChars - index);
+    temp[cauntChars - index] = '\0';
     while (temp[i] != '\0')
     {
         if (temp[i] != ' ')
@@ -230,37 +291,50 @@ int checkOperator(char* queryRow, char* operator)
         i++;
     }
     operator[j] = '\0';
-    if (strlen(operator) == 1)
+    if (flag != 0)
+    {
+        if (strcmp(operator,"=") != 0)
+            return 0;
+    }
+    else if (strlen(operator) == 1)
     {
         if (strcmp(operator,"=") != 0 && strcmp(operator,"<") != 0 && strcmp(operator,">") != 0)
-            rez = 0;
+            return 0;
     }
     else if (strlen(operator) == 2)
     {
         if (strcmp(operator,"!=") != 0 && strcmp(operator,"<=") != 0 && strcmp(operator,">=") != 0)
-            rez = 0;
+            return 0;
     }
     else if (strlen(operator) > 2)
-        rez = 0;
+        return 0;
 
-    strncpy(queryRow, queryRow + range, strlen(queryRow) - range);
-    strcpy(queryRow + strlen(queryRow) - range, "\0");
-    return rez;
+    strncpy(queryRow, queryRow + cauntChars, strlen(queryRow) - cauntChars);
+    strcpy(queryRow + strlen(queryRow) - cauntChars, "\0");
+    return 1;
 }
 
 int checkData(char* queryRow, char* fild, char* data)
 {
-    int index = 0, isProper = 0;
-    while (queryRow[index] >= 'a' && queryRow[index] <= 'z' || queryRow[index] >= 'A' && queryRow[index] <= 'Z' || queryRow[index] >= '0' && queryRow[index] <= '9' || queryRow[index] == '-')
-        index++;
+    int index = 0, isProper = 0;    
+    while (queryRow[index] >= 'a' && queryRow[index] <= 'z' || queryRow[index] >= 'A' && queryRow[index] <= 'Z' || queryRow[index] >= '0' && queryRow[index] <= '9' || queryRow[index] == '-' || queryRow[index] == ' ')
+        index++;   
+    if (index == 0)
+        return 0;
     strncpy(data, queryRow, index);
     data[index] = '\0';
+    while (data[index - 1] == ' ')
+    {
+        index--;
+        data[index] = '\0';
+    }        
     if (strcmp(fild, "firstname") == 0 || strcmp(fild, "secondname") == 0)
         isProper = checkNamesData(data);
     else if (strcmp(fild, "id") == 0)
         isProper = checkIdData(data);
     else if (strcmp(fild, "clanguage") == 0 || strcmp(fild, "computernetworks") == 0 || strcmp(fild, "csfundamentals") == 0 || strcmp(fild, "average") == 0)
         isProper = checkScoresData(data);
+    
     return isProper;
 }
 
@@ -273,60 +347,61 @@ int validationRow(char* Row)
 {
     char* token, * row;
     int rez = 0, i;
+    if (strlen(Row) == 0)    
+        return 3;    
     row = (char*)malloc(sizeof(char) * (strlen(Row) + 1));
-    strcpy(row, Row);
-    strcpy(row + strlen(Row), "\0");
     if (row == NULL)
     {
-        rez = 1;
+        rez = 0;
         return rez;
     }
-    else
-    {
-        token = strtok(row, ",");
-        /*Check the firstName*/
-        if (rez = isChars(token))
-            return rez;
-        token = strtok(NULL, ",");
+    strcpy(row, Row);
+    strcpy(Row + strlen(Row), "\0");                             
+    token = strtok(row, ",");
+    /*Check the firstName*/
+    if (rez = isChars(token))
+        return rez;
+    token = strtok(NULL, ",");
 
-        /*Check the secondName*/
-        if (rez = isChars(token))
-            return rez;
-        token = strtok(NULL, ",");
+    /*Check the secondName*/
+    if (rez = isChars(token))
+        return rez;
+    token = strtok(NULL, ",");
 
-        /*Check the Id*/
-        if (rez = properId(token))
-            return rez;
-        token = strtok(NULL, ",");
+    /*Check the Id*/
+    if (rez = properId(token))
+        return rez;
+    token = strtok(NULL, ",");
 
-        /*Check the coursName*/
-        if (rez = checkCoursName(token))
-            return rez;
-        token = strtok(NULL, ",");
+    /*Check the coursName*/
+    if (rez = checkCoursName(token))
+        return rez;
+    token = strtok(NULL, ",");
 
-        /*Check the Scor*/
-        if (rez = isScore(token))
-            return rez;
-    }
+    /*Check the Scor*/
+    if (rez = isScore(token))
+        return rez;
+
     free(row);
+
     return rez;
 }
 
 
 /*return 0 if the quety is not good and 1 if the is good*/
-int validetionSelectQuety(char* queryLine, char* fild, char* operator, char* data)
+int validetionSelectQuety(char* queryLine, char* fild, char* operator, char* data,int flag)
 {    
     int index = 0, isProper = 0;
-    char temp[20];
+    char temp[20];       
     while (queryLine[index] == ' ')
         index++;
-    isProper = checkFildName(queryLine + index, fild);
+    isProper = checkFildName(queryLine + index, fild,flag);    
     if (!isProper)
-        return isProper;
-    isProper = checkOperator(queryLine, operator);
+        return isProper;   
+    isProper = checkOperator(queryLine, operator,flag);   
     if (!isProper)
-        return isProper;
-    isProper = checkData(queryLine, fild, data);
+        return isProper;    
+    isProper = checkData(queryLine, fild, data);     
     return isProper;
 
 }
@@ -339,7 +414,7 @@ int validetionSelectQuety(char* queryLine, char* fild, char* operator, char* dat
   6 if the scor including chars thet not numbers , 7 if the sum of the scor is greater than 100  */
 int validationSetQuety(char* queryRow)
 {   
-    int isProper = 1,j=0 ,index=0;
+    int isProper = 1,j=0 ,index=0,caunt = 0;
     char* token, fild[20], operat[3], data[50], * line;
     line = (char*)malloc(sizeof(char) * (strlen(queryRow) + 1));    
     if (line == NULL)
@@ -349,75 +424,37 @@ int validationSetQuety(char* queryRow)
     }    
     strcpy(line, queryRow);    
     strcpy(line + strlen(queryRow), "\0");
-    
-    while (queryRow[index] != '=')
-        index++;
-    index++;
-    while (queryRow[index] != ',')
-    {
-        index++;
-        j++;
-    }
-    strncpy(line, queryRow + index - j, j);
-    strcpy(line + j, "\0");
-    while (queryRow[index] != '=')
-        index++;
-    index++;
-    j = 0;
-    while (queryRow[index] != ',')
-    {
-        index++;
-        j++;
-    }
-    strcat(line, ",");
-    strncat(line, queryRow + index - j, j);
-    strcat(line, ",");
-    strcpy(line + strlen(line), "\0");
-    while (queryRow[index] != '=')
-        index++;
-    index++;
-    j = 0;
-    while (queryRow[index] != ',')
-    {
-        index++;
-        j++;
-    }    
-    strncat(line, queryRow + index - j, j);
-    strcat(line, ",");
-    strcpy(line + strlen(line), "\0");
-    index++;
-    while (queryRow[index] == ' ')
-        index++;
-    j = 0;
-    while (queryRow[index] != ' ')
-    {
-        index++;
-        j++;
-    }
-    strncat(line, queryRow + index - j, j);
-    strcat(line, ",");
-    strcpy(line + strlen(line), "\0");
-    index++;
-    while (queryRow[index] != ' ')
-        index++;
-    while (queryRow[index] == ' ')
-        index++;
-    j = 0;
-    while (queryRow[index] != '\0')
-    {
-        index++;
-        j++;
-    }
-    strncat(line, queryRow + index - j, j);    
-    strcpy(line + strlen(line), "\0");   
-    strcpy(queryRow ,"\0");    
-    j = 0;
-    while (line[j] != '\0')
-    {
-        if(line[j]!= ' ')
-            strncat(queryRow, line + j, 1);
-        j++;
-    }   
 
-    return isProper;
+    token = strtok(line, ",");
+    while (token != NULL && caunt < 3)
+    {        
+        caunt++;        
+        isProper = validetionSelectQuety(token , fild, operat, data,caunt);       
+        if (isProper == 0)
+            return isProper;
+        if (caunt == 1)
+            strcpy(queryRow, data);
+        else
+            strcat(queryRow, data);
+        strcat(queryRow, ",");
+        token = strtok(NULL, ",");
+    }
+    if (token != NULL)
+    {        
+        caunt++;
+        isProper = validetionSelectQuety(token, fild, operat, data, caunt);        
+        if (isProper == 0)
+            return isProper;
+        strcat(queryRow, fild);
+        strcat(queryRow, ",");
+        strcat(queryRow, data);
+        strcat(queryRow, "\0");
+    }
+    if (caunt != 4)
+    {
+        isProper = 0;
+        return isProper;
+    }
+
+    return 1;        
 }

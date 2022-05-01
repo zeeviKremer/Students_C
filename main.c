@@ -4,14 +4,12 @@
 int main() 
 {			
     int checkFile = 0;
-	student* head=NULL;
-    FILE* fRead;
-    
+	student* head=NULL;        
     head = raedFile(head,&checkFile);       
     if (checkFile)
     {
         printf("cannot open the file");
-        exit(1);
+        exit(checkFile);
     }
     else
     {       

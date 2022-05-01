@@ -3,14 +3,14 @@
 /*create a new node , insert the valeu , return a ponter to the node*/
 student* createNode(char* line)
 {
-    char* firsName, * secondName, * token, ch[2] = ",";
+    char* firsName , * secondName, * token, ch[2] = ",";
     student* newStude;
     int i, sum = 0, caunt = 0;
     newStude = (student*)malloc(sizeof(student));
     if (newStude == NULL)
         return newStude;
     token = strtok(line, ch);
-    firsName = (char*)malloc(sizeof(char) * (strlen(token) + 1));
+    firsName = (char*)malloc(sizeof(char) * (strlen(token) + 1));    
     strcpy(firsName, token);
     strcpy(firsName + strlen(token), "\0");
     newStude->FirstName = firsName;
@@ -223,14 +223,14 @@ void updateStudentQuery(student** head, student* ptrNode, student* newStud)
           if (ptrNode == (*head))
              {                           
               (*head) = (*head)->next;                
-                updateScor(newStud, ptrNode);               
+                updateScor(ptrNode, newStud);
                 ptrPrv = getIndexToInsertQuery((*head), newStud);
                 addTolistQuery(head, ptrPrv, newStud);               
              }
           else
              {                                         
                 ptrPrv->next = ptrNode->next;                  
-                updateScor(newStud, ptrNode);                
+                updateScor(ptrNode, newStud);
                 ptrPrv = getIndexToInsertQuery((*head), newStud);
                 addTolistQuery(head, ptrPrv, newStud);                
              }          
@@ -263,17 +263,19 @@ student* raedFile(student* head, int* checkFile)
     FILE* fRead;
     fRead = fopen("students.csv", "rt");
     if (fRead == NULL)
-    {
+    {        
         *checkFile = 1;
         return head;
     }
-    do
+    if (fgetc(fRead) == EOF)
     {
-        if (countRows > 0)
-        {
-            fseek(fRead, -1, SEEK_CUR);
-        }
-        fgets(row, MAX_LINE, fRead);
+        *checkFile = 2;
+        return head;
+    }
+    do
+    {        
+        fseek(fRead, -1, SEEK_CUR);               
+        fgets(row, MAX_LINE, fRead);       
         countRows++;
         if (row[strlen(row) - 1] == '\n')
         {
@@ -319,7 +321,7 @@ student* raedFile(student* head, int* checkFile)
 int updateFile(student* head)
 {
     FILE* fWrite;    
-    int i;   
+    int i;      
     fWrite = fopen("students.csv", "w+");
     if (fWrite == NULL)
     {        
@@ -363,7 +365,7 @@ void printFuter()
 void printNode(student* stud)
 {
     int i;
-    printf("|  %-8s  |  %-8s    |%10s |", stud->FirstName, stud->SecondName, stud->Id);
+    printf("| %-8s   | %-8s     |%10s |", stud->FirstName, stud->SecondName, stud->Id);
     for (i = 0; i < 3; i++)
     {
         if (stud->courses[i] > -1)

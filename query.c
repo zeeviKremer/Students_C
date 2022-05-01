@@ -20,7 +20,7 @@ void runQueries(student* head)
 
 int checkQweri(char* queryLine, student** head)
 {
-    char fild[20], operat[3], data[50], * line,str[100];
+    char fild[20], operat[3], data[50], * line;
     int index = 0, range, i, j, isFound = 0, checkSyntax, isExist, checkQuery;
     student* newList[10] = { NULL }, * newStud, * ptrNode, * ptrPrv,*tail=NULL;
     
@@ -37,7 +37,7 @@ int checkQweri(char* queryLine, student** head)
     }
     else if (strncmp(queryLine + index, "select", 6) == 0)
     {
-        checkQuery = validetionSelectQuety(queryLine + index + 6, fild, operat, data);
+        checkQuery = validetionSelectQuety(queryLine + index + 6, fild, operat, data,0);
         if (checkQuery)
         {
             isFound = selectFromList((*head), fild, operat, data, newList);
@@ -50,7 +50,7 @@ int checkQweri(char* queryLine, student** head)
                 printFuter();
             }
             else
-                printf("\n  No found students were like to the query\n\n");
+                printf("\n  Not found students were like to the query\n\n");
         }
         else
             printf("\n  The query is invalid\n\n");
@@ -58,11 +58,10 @@ int checkQweri(char* queryLine, student** head)
     }
     else if (strncmp(queryLine + index, "set", 3) == 0)
     {        
-        checkQuery = validationSetQuety(queryLine + index + 3);
-        checkQuery = 1;
+        checkQuery = validationSetQuety(queryLine + index + 3);         
         if (checkQuery)
-        {                       
-            newStud = createNode(queryLine +3);
+        {            
+            newStud = createNode(queryLine +3);           
             isExist = existInList((*head), newStud);
             if (isExist)
             {

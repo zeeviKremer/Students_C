@@ -7,14 +7,10 @@ typedef struct student {
     char* FirstName;
     char* SecondName;
     char Id[10];
-    int courses[COURSES];
+    char courses[COURSES];
     float average;
     struct student* next;
 }student;
-
-typedef enum  {
-    Clanguage, ComputerNetworks, CSFundamentals
-}coursesName;
 
 student* raedFile(student* head, int* checkFile);
 student* createNode(char* line);

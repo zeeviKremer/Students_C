@@ -149,14 +149,14 @@ int checkIdData(char* data)
 
 int checkScoresData(char* data)
 {
-    int i = 0, scor, caunt = 0;       
+    int i = 0, scor, countDigits = 0;
     while (data[i] != '\0')
     {        
         if (i == 0)
         {
             if (data[i] >= '0' && data[i] <= '9')
             {
-                caunt++;
+                countDigits++;
                 i++;
             }
             else if (data[0] == '-' && data[1] == '1')
@@ -173,29 +173,111 @@ int checkScoresData(char* data)
             }
             else
                 return 0;
+                
         }  
         else
         {
             if (!(data[i] >= '0' && data[i] <= '9') && data[i] != ' ')
-                return 0;                
+                return 0;
+                                
             else if (data[i] >= '0' && data[i] <= '9')
-                caunt++;
+                countDigits++;
             i++;
         }
     }        
     scor = atoi(data);
     if (scor < 0 || scor > 100)
         return 0;
-    else if (scor > 99 && caunt > 3)
+    else if (scor > 99 && countDigits > 3)
         return 0;
-    else if ((scor > 9 && scor < 100) && caunt > 2)
+    else if ((scor > 9 && scor < 100) && countDigits > 2)
         return 0;
-    else if ((scor >=-1 && scor < 10) && caunt > 1)
+    else if ((scor >=-1 && scor < 10) && countDigits > 1)
         return 0;
     
     return 1;
 }
 
+int checkAverageData(char* data)
+{   
+    int i = 0, sumBeforePoint, sumAfterPoint, countDigitsBefore = 0, countDigitsAfter = 0, countPoints = 0;
+    float f_data;
+    while (data[i] != '\0')
+    {
+        if (i == 0)
+        {
+            if (data[i] >= '0' && data[i] <= '9')
+            {
+                countDigitsBefore++;
+                i++;
+            }
+            else if (data[0] == '-' && data[1] == '1')
+            {
+                i = 2;
+                while (data[i] != '\0')
+                {
+                    if (data[i] != ' ')
+                        return 0;
+                    i++;
+                }
+                return 1;
+
+            }
+            else
+                return 0;
+        }
+        else
+        {
+            if (!(data[i] >= '0' && data[i] <= '9') && data[i] != ' ' && data[i] != '.')
+                return 0;
+            else if (data[i] >= '0' && data[i] <= '9' && countPoints ==0)
+                countDigitsBefore++;
+            else if (data[i] >= '0' && data[i] <= '9' && countPoints != 0)
+                countDigitsAfter++;
+            else if (data[i] == '.')
+                countPoints++;
+            i++;
+        }
+    }    
+    if (countPoints > 1)
+        return 0;        
+    else if (countPoints)
+    {        
+        while (data[i] != '.')        
+            i++;        
+        sumBeforePoint = atoi(data);
+        sumAfterPoint = atoi(data +i+1); 
+        if (sumBeforePoint < 0 || sumBeforePoint > 100)
+            return 0;
+        else if (sumBeforePoint > 99 && countDigitsBefore > 3)
+            return 0;
+        else if ((sumBeforePoint > 9 && sumBeforePoint < 100) && countDigitsBefore > 2)
+            return 0;
+        else if ((sumAfterPoint >= -1 && sumBeforePoint < 10) && countDigitsBefore > 1)
+            return 0;
+        
+        if (sumAfterPoint < 0 || sumAfterPoint > 99)
+            return 0;
+        else if (countDigitsAfter > 2)
+            return 0;
+        else if (sumBeforePoint == 100 && sumAfterPoint > 0)
+            return 0;
+    }
+    else
+    {
+        sumBeforePoint = atoi(data);
+        if (sumBeforePoint < 0 || sumBeforePoint > 100)
+            return 0;
+        else if (sumBeforePoint > 99 && countDigitsBefore > 3)
+            return 0;
+        else if ((sumBeforePoint > 9 && sumBeforePoint < 100) && countDigitsBefore > 2)
+            return 0;
+        else if ((sumBeforePoint >= -1 && sumBeforePoint < 10) && countDigitsBefore > 1)
+            return 0;
+    }    
+
+    return 1;
+}
 
 int checkFildName(char* queryRow, char* fild,int flag)
 {
@@ -264,7 +346,7 @@ int checkFildName(char* queryRow, char* fild,int flag)
 int checkOperator(char* queryRow, char* operator,int flag)
 {
     char* temp;
-    int index = 0, cauntChars, i, j;
+    int index = 0, cauntChars, i, j,indexOfOperator = 0;
     while (queryRow[index] == ' ')
         index++;    
     cauntChars = index;
@@ -293,17 +375,31 @@ int checkOperator(char* queryRow, char* operator,int flag)
     operator[j] = '\0';
     if (flag != 0)
     {
-        if (strcmp(operator,"=") != 0)
+        if (strcmp(operator,"=") == 0)
+            indexOfOperator =  1;
+        else
             return 0;
     }
     else if (strlen(operator) == 1)
     {
-        if (strcmp(operator,"=") != 0 && strcmp(operator,"<") != 0 && strcmp(operator,">") != 0)
+        if (strcmp(operator,"=") == 0)
+            indexOfOperator = 1;
+        else if (strcmp(operator,"<") == 0)
+            indexOfOperator = 2;
+        else if (strcmp(operator,">") == 0)
+            indexOfOperator = 3;
+        else
             return 0;
     }
     else if (strlen(operator) == 2)
     {
-        if (strcmp(operator,"!=") != 0 && strcmp(operator,"<=") != 0 && strcmp(operator,">=") != 0)
+        if (strcmp(operator,"!=") == 0)
+            indexOfOperator = 4;
+        else if(strcmp(operator,"<=") == 0)
+            indexOfOperator = 5;
+        else if(strcmp(operator,">=") == 0)
+            indexOfOperator = 6;
+        else
             return 0;
     }
     else if (strlen(operator) > 2)
@@ -311,30 +407,32 @@ int checkOperator(char* queryRow, char* operator,int flag)
 
     strncpy(queryRow, queryRow + cauntChars, strlen(queryRow) - cauntChars);
     strcpy(queryRow + strlen(queryRow) - cauntChars, "\0");
-    return 1;
+    return  indexOfOperator;
 }
 
 int checkData(char* queryRow, char* fild, char* data)
 {
-    int index = 0, isProper = 0;    
-    while (queryRow[index] >= 'a' && queryRow[index] <= 'z' || queryRow[index] >= 'A' && queryRow[index] <= 'Z' || queryRow[index] >= '0' && queryRow[index] <= '9' || queryRow[index] == '-' || queryRow[index] == ' ')
+    int index = 0, isProper = 0;       
+    while (queryRow[index] >= 'a' && queryRow[index] <= 'z' || queryRow[index] >= 'A' && queryRow[index] <= 'Z' || queryRow[index] >= '0' && queryRow[index] <= '9' || queryRow[index] == '-' || queryRow[index] == ' ' || queryRow[index] == '.')
         index++;   
     if (index == 0)
-        return 0;
+        return 0;   
     strncpy(data, queryRow, index);
     data[index] = '\0';
     while (data[index - 1] == ' ')
     {
         index--;
         data[index] = '\0';
-    }        
+    }           
     if (strcmp(fild, "firstname") == 0 || strcmp(fild, "secondname") == 0)
         isProper = checkNamesData(data);
     else if (strcmp(fild, "id") == 0)
-        isProper = checkIdData(data);
-    else if (strcmp(fild, "clanguage") == 0 || strcmp(fild, "computernetworks") == 0 || strcmp(fild, "csfundamentals") == 0 || strcmp(fild, "average") == 0)
+        isProper = checkIdData(data);       
+    else if (strcmp(fild, "clanguage") == 0 || strcmp(fild, "computernetworks") == 0 || strcmp(fild, "csfundamentals") == 0 )
         isProper = checkScoresData(data);
-    
+    else if (strcmp(fild, "average") == 0)
+        isProper = checkAverageData(data);
+       
     return isProper;
 }
 
@@ -356,7 +454,7 @@ int validationRow(char* Row)
         return rez;
     }
     strcpy(row, Row);
-    strcpy(Row + strlen(Row), "\0");                             
+    strcpy(row + strlen(Row), "\0");
     token = strtok(row, ",");
     /*Check the firstName*/
     if (rez = isChars(token))
@@ -387,23 +485,22 @@ int validationRow(char* Row)
     return rez;
 }
 
-
 /*return 0 if the quety is not good and 1 if the is good*/
-int validetionSelectQuety(char* queryLine, char* fild, char* operator, char* data,int flag)
-{    
-    int index = 0, isProper = 0;
-    char temp[20];       
-    while (queryLine[index] == ' ')
-        index++;
-    isProper = checkFildName(queryLine + index, fild,flag);    
-    if (!isProper)
-        return isProper;   
-    isProper = checkOperator(queryLine, operator,flag);   
-    if (!isProper)
-        return isProper;    
-    isProper = checkData(queryLine, fild, data);     
-    return isProper;
+int validetionSelectQuery(char* queryRow, char* fild, char* operator, char* data, int flag)
+{
 
+    int index = 0, isProper = 0;
+    while (queryRow[index] == ' ')
+        index++;
+    isProper = checkFildName(queryRow + index, fild, flag);
+    if (!isProper)
+        return isProper;
+    isProper = checkOperator(queryRow, operator,flag);
+    if (!isProper)
+        return isProper;
+    isProper = checkData(queryRow, fild, data);
+
+    return isProper;
 }
 
 /*return 0 if the syntax of the line is good and chang the syntax like a line in the file ,
@@ -412,9 +509,9 @@ int validetionSelectQuety(char* queryLine, char* fild, char* operator, char* dat
   3 if the Id including chars thet not numbers , 4 if the length of the Id is not 9 chars ,
   5 if not exist a coursName in the courses like the coursName ,
   6 if the scor including chars thet not numbers , 7 if the sum of the scor is greater than 100  */
-int validationSetQuety(char* queryRow)
+int validationSetQuery(char* queryRow)
 {   
-    int isProper = 1,j=0 ,index=0,caunt = 0;
+    int isProper = 1,j=0 ,index=0,count = 0;
     char* token, fild[20], operat[3], data[50], * line;
     line = (char*)malloc(sizeof(char) * (strlen(queryRow) + 1));    
     if (line == NULL)
@@ -426,13 +523,13 @@ int validationSetQuety(char* queryRow)
     strcpy(line + strlen(queryRow), "\0");
 
     token = strtok(line, ",");
-    while (token != NULL && caunt < 3)
+    while (token != NULL && count < 3)
     {        
-        caunt++;        
-        isProper = validetionSelectQuety(token , fild, operat, data,caunt);       
+        count++;
+        isProper = validetionSelectQuery(token , fild, operat, data, count);
         if (isProper == 0)
             return isProper;
-        if (caunt == 1)
+        if (count == 1)
             strcpy(queryRow, data);
         else
             strcat(queryRow, data);
@@ -441,8 +538,8 @@ int validationSetQuety(char* queryRow)
     }
     if (token != NULL)
     {        
-        caunt++;
-        isProper = validetionSelectQuety(token, fild, operat, data, caunt);        
+        count++;
+        isProper = validetionSelectQuery(token, fild, operat, data, count);
         if (isProper == 0)
             return isProper;
         strcat(queryRow, fild);
@@ -450,7 +547,7 @@ int validationSetQuety(char* queryRow)
         strcat(queryRow, data);
         strcat(queryRow, "\0");
     }
-    if (caunt != 4)
+    if (count != 4)
     {
         isProper = 0;
         return isProper;

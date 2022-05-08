@@ -368,8 +368,7 @@ int select_csfundamentals(student* head, int operator, char* data) {
 }
 
 int select_average(student* head, int operator, char* data) {
-	student* ptrStud = head;
-	char* token;	
+	student* ptrStud = head;	
 	int isFirst = 0, toPrint = 0, isFind = 0,i=0,isPoint = 0;
 	float f_data;	
 	while (data[i] != '\0')
@@ -462,17 +461,52 @@ int genericSelect(student* head, int field, int operator,void* data)
 	return 0;
 }
 
+void printMenu()
+{
+	printf("    to querying the system enter select and the query sentence\n\n");
+	printf("    (select firstName = beni)\n\n");
+	printf("    to update or insert data enter set and the data\n\n");
+	printf("    (set firstName = dani, secondName = haham, id = 111222333, clanguage = 45)\n\n");
+	printf("    to delete a student enter deleteand the id\n\n");
+	printf("    (delete id = 111222333)\n\n");
+	printf("    to print the data enter print\n\n");
+	printf("    to print the menu enter menu\n\n");
+	printf("    to exit enter quit");
+}
+
+void deleteStudent(student** head, char* data)
+{
+	student* ptrCur = (*head),*ptrPrv;
+	if (strcmp(ptrCur->Id, data) == 0)
+	{
+		(*head) = (*head)->next;
+		freeStudent(ptrCur);
+	}
+	do
+	{
+		ptrPrv = ptrCur;
+		ptrCur = ptrCur->next;
+		if (strcmp(ptrCur->Id, data) == 0)
+		{
+			ptrPrv->next = ptrCur->next;
+			freeStudent(ptrCur);
+			break;
+		}
+	} while (ptrCur->next != NULL);			
+}
+
 void runQueries(student* head)
 {
     int chackOpenFile=0;
     char queryLine[MAX_LINE];
-    printf("    to querying the system enter select and the query sentence\n    (select firstName = beni)\n    to update or insert data enter set and the data\n    (set firstName = dani , secondName = haham , id = 111222333 , clanguage = 45)\n    to print the data enter print\n    to exit enter quit");
+	printMenu();
     do
     {
         printf("\n  ->  ");
         gets(queryLine);
     } while (checkQuery(queryLine, &head));
     chackOpenFile = updateFile(head);
+	freeList(head);	
     if (chackOpenFile)
     {
         printf("cannot open the file to update");
@@ -486,13 +520,21 @@ int checkQuery(char* queryRow, student** head)
     int index = 0, range, fieldId , operatorId , isFind = 0, checkSyntax, isExist, checkQuery;
     student* newList[10] = { NULL }, * newStud, * ptrNode, * ptrPrv,*tail=NULL;
     
+	while (queryRow[index] != '\0')
+	{
+		if (queryRow[index] >= 'A' && queryRow[index] <= 'Z')
+			queryRow[index] += 32;
+		index++;
+	}
+		index++;
+	index = 0;
     while (queryRow[index] == ' ')
         index++;
 
     if (strncmp(queryRow + index, "quit", 4) == 0)
         return 0;
     else if (strncmp(queryRow + index, "print", 5) == 0)
-    {
+	{				
         printf("\n");
         printList((*head));
         return 1;
@@ -536,20 +578,30 @@ int checkQuery(char* queryRow, student** head)
         
         return 1;              
     }
-	else if (strncmp(queryRow + index, "delete", 3) == 0)
+	else if (strncmp(queryRow + index, "delete", 6) == 0)
 	{
-		checkQuery = validationDeleteQuery(queryRow + index + 6);
+		checkQuery = validationDeleteQuery(queryRow + index + 6, data);
 		if (checkQuery)
 		{
-			printf("     delete student successful");
-
-
-			printf("\n  Not found students were like to the query\n\n");
+			isExist = ExistToDelete((*head), data);
+			if (isExist)
+			{
+				deleteStudent(head, data);
+				printf("     delete student successful");
+			}
+			else
+			{
+				printf("\n  Not found students were like to the query\n\n");
+			}						
 		}
 		else
 			printf("\n  The query is invalid\n\n");
 
 		return 1;
+	}
+	else if (strncmp(queryRow + index, "menu", 4) == 0)
+	{
+		printMenu();
 	}
 	else
         printf("\n  The query is invalid\n\n");

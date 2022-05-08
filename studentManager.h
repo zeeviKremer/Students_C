@@ -14,6 +14,15 @@ typedef struct student {
 }student;
 
 
+typedef struct studManagar {
+    student* head;
+    student* tail;
+    char isSorted;
+    char countAdded;
+    char countUpdate;
+}studManagar;
+
+
 typedef enum {
 
     firstname = 1, secondname, id, clanguage, computernetworks, csfundamentals, average
@@ -35,3 +44,6 @@ void printFuter();
 void printNode(student* stud);
 void printList(student* head);
 void getId(char* field,char* operator,int* fieldId, int* operatorId);
+void freeStudent(student* ptrStud);
+void freeList(student* head);
+int ExistToDelete(student*  head, char* data);

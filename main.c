@@ -1,11 +1,11 @@
 #include "main.h"
 
 
-int main() 
-{			
+int main()
+{    
     int checkFile = 0;
-	student* head=NULL;        
-    head = raedFile(head,&checkFile);       
+	student* head=NULL;
+    head = readFile(head,&checkFile);     
     if (checkFile)
     {
         printf("cannot open the file");
@@ -13,7 +13,7 @@ int main()
     }
     else
     {       
-        runQueries(head);       
+        runQueries(head);
     }
             
 	return 0;

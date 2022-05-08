@@ -236,15 +236,16 @@ student* readFile(student* head, int* checkFile)
                 newStud = createNode(row); 
                 isExist = existInList(head, tail, newStud);                
                 
-                if (isExist == -1) {
+                if (isExist == -1) 
+                {
                     printf("error in file line number %d error number is %d", countRows, isExist);
-                    free(newStud);
+                    freeStudent(newStud);                   
                 }
                 else if (isExist == 1)
                 {
                     ptrNode = getPtrToNode(head, newStud);                    
                     updateStudent(ptrNode, newStud);
-                    free(newStud);
+                    freeStudent(newStud);
 
                 }
                 else if (!(isExist))
@@ -359,4 +360,37 @@ void getId(char* field, char* operator,int* fieldId, int* operatorId)
         if (strcmp(arrOperators[i], operator) == 0)
             *operatorId = i;
     }    
+}
+
+
+void freeStudent(student* ptrStud)
+{
+    free(ptrStud->FirstName);
+    free(ptrStud->SecondName);
+    free(ptrStud);
+}
+
+
+void freeList(student* head)
+{
+    student* ptrStud;
+    while (head)
+    {
+        ptrStud = head;
+        head = head->next;
+        freeStudent(ptrStud);        
+    }    
+}
+
+
+int ExistToDelete(student* head, char* data)
+{
+    student* ptrStud = head;
+    while (ptrStud != NULL)
+    {
+        if (strcmp(ptrStud->Id, data) == 0)
+            return 1;
+        ptrStud = ptrStud->next;
+    }
+    return 0;
 }

@@ -555,3 +555,34 @@ int validationSetQuery(char* queryRow)
 
     return 1;        
 }
+
+int validationDeleteQuery(char* queryRow,char* data)
+{
+    int index , rez;
+    index = strlen(queryRow);
+    while (queryRow[index - 1] == ' ')
+    {
+        index--;
+        queryRow[index] = '\0';
+    }
+    index = 0;
+    while (queryRow[index] == ' ')
+        index++;    
+    if (strncmp(queryRow + index,"id",2) != 0)
+        return 0;
+    index += 2;    
+    while (queryRow[index] == ' ')
+        index++;    
+    if (queryRow[index] != '=')
+        return 0;
+    index++;    
+    while (queryRow[index] == ' ')
+        index++; 
+    rez = checkIdData(queryRow + index);
+    if (rez)
+    {
+        strcpy(data, queryRow + index);
+        strcat(data + strlen(data), "\0");
+    }        
+    return rez;
+}

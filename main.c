@@ -3,17 +3,17 @@
 
 int main()
 {    
-    int checkFile = 0;
-	student* head=NULL;
-    head = readFile(head,&checkFile);     
-    if (checkFile)
-    {
-        printf("cannot open the file");
-        exit(checkFile);
+    studManagar* studentsManager;
+    studentsManager = readFile(FILE_NAME);
+    if (studentsManager == NULL)
+    {        
+        return -1;
     }
     else
-    {       
-        runQueries(head);
+    {
+        printList(studentsManager);
+        runQueries(studentsManager);
+        freeList(studentsManager);
     }
             
 	return 0;

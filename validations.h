@@ -7,7 +7,7 @@ int checkNamesData(char* data);
 int checkIdData(char* data);
 int checkScoresData(char* data);
 int checkAverageData(char* data);
-int checkFildName(char* queryRow, char* field, int flag);
+int checkFieldName(char* queryRow, char* field, int flag);
 int checkOperator(char* queryRow, char* operator,int flag);
 int checkData(char* queryRow, char* field, char* data);
 int validationRow(char* Row);

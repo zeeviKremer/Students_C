@@ -4,7 +4,7 @@
 
 /*create a new node , insert the valeu , return a ponter to the node*/
 student* createNode(char* row)
-{
+{    
     char* token;
     student* newStude;
     int i, sum = 0, caunt = 0;
@@ -16,39 +16,45 @@ student* createNode(char* row)
     }        
     token = strtok(row, ",");
     newStude->FirstName = (char*)malloc(sizeof(char) * (strlen(token) + 1));
-    strcpy(newStude->FirstName, token);
-    strcpy(newStude->FirstName + strlen(token), "\0");    
+    if (newStude->FirstName != NULL)
+    {
+        strcpy(newStude->FirstName, token);
+        strcat(newStude->FirstName, "\0");
+    }      
     token = strtok(NULL, ",");
     newStude->SecondName = (char*)malloc(sizeof(char) * (strlen(token) + 1));
-    strcpy(newStude->SecondName, token);
-    strcpy(newStude->SecondName + strlen(token), "\0");    
+    if (newStude->SecondName != NULL)
+    {
+        strcpy(newStude->SecondName, token);
+        strcat(newStude->SecondName, "\0");
+    }        
     token = strtok(NULL, ",");
     strcpy(newStude->Id, token);
-    newStude->Id[(strlen(token) + 1)] = '\0';
+    strcat(newStude->Id, "\0");    
     token = strtok(NULL, ",");
-    for (i = 0; i < 3; i++)
-        newStude->courses[i] = -1;
+    for (i = 0; i < SUM_COURSES; i++)
+        newStude->marks[i] = NOT_TESTED;    
     if (strcmp(token, "C language") == 0 || strcmp(token, "clanguage") == 0 )
     {
         token = strtok(NULL, ",");
-        newStude->courses[0] = atoi(token);
+        newStude->marks[0] = atoi(token);
     }
-    else if (strcmp(token, "Computer Networks") == 0 || strcmp(token, "ComputerNetworks") == 0)
+    else if (strcmp(token, "Computer Networks") == 0 || strcmp(token, "computernetworks") == 0)
     {
         token = strtok(NULL, ",");
-        newStude->courses[1] = atoi(token);
+        newStude->marks[1] = atoi(token);
     }
-    else if (strcmp(token, "CS Fundamentals") == 0 || strcmp(token, "CSFundamentals") == 0)
+    else if (strcmp(token, "CS Fundamentals") == 0 || strcmp(token, "csfundamentals") == 0)
     {
         token = strtok(NULL, ",");
-        newStude->courses[2] = atoi(token);
+        newStude->marks[2] = atoi(token);
     }
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < SUM_COURSES; i++)
     {
-        if (newStude->courses[i] > -1)
+        if (newStude->marks[i] > NOT_TESTED)
         {
             caunt++;
-            sum += newStude->courses[i];
+            sum += newStude->marks[i];
         }
     }
     newStude->average = ((float)sum / (float)caunt);
@@ -59,24 +65,31 @@ student* createNode(char* row)
 
 /*return 1 if the student is exist in the list or 0 if thet not exist in the list
  or -1 if exist a student with tis id and firstName or secondName is different*/
-int existInList(student* head, student* tail, student* stud)
+int existInList(studManagar* studentsManager, student* stud)
 {   
-    student* ptr = head;
-    if (tail != NULL && strcmp(tail->Id, stud->Id) == 0)
+    student* ptr = studentsManager->head;
+    if (studentsManager->tail != NULL && strcmp(studentsManager->tail->Id, stud->Id) == 0)
     {
-        if (strcmp(tail->FirstName, stud->FirstName) == 0 && strcmp(tail->SecondName, stud->SecondName) == 0)
+        if (strcmp(studentsManager->tail->FirstName, stud->FirstName) == 0 && strcmp(studentsManager->tail->SecondName, stud->SecondName) == 0)
+        {
+            studentsManager->isSorted = 1;
             return 1;
+        }            
         else
             return -1;
     }
     else
     {
+        studentsManager->isSorted = 1;
         while (ptr != NULL)
         {            
             if (strcmp(ptr->Id, stud->Id) == 0)
             {                
                 if (strcmp(ptr->FirstName, stud->FirstName) == 0 && strcmp(ptr->SecondName, stud->SecondName) == 0)
+                {
+                    studentsManager->isSorted = 0;
                     return 1;
+                }                    
                 else
                     return -1;
             }
@@ -88,9 +101,9 @@ int existInList(student* head, student* tail, student* stud)
 }
 
 /*return a ponter to the node thet is like to the current node*/
-student* getPtrToNode(student* head, student* newStud)
+student* getPtrToNode(studManagar* studentsManager, student* newStud)
 {
-    student* ptr = head;
+    student* ptr = studentsManager->head;
     while (ptr != NULL)
     {
         if (strcmp(ptr->Id, newStud->Id) == 0)
@@ -104,34 +117,36 @@ student* getPtrToNode(student* head, student* newStud)
 /*update the olde Student from the new student*/
 void updateStudent(student* ptrStud, student* newStud)
 {
-    int i, sum = 0, caunt = 0;
-    /*strcpy(ptrStud->FirstName , newStud->FirstName);
-    strcpy(ptrStud->SecondName , newStud->SecondName);
-    strcpy(ptrStud->Id, newStud->Id);*/
-    for (i = 0; i < 3; i++)
+    
+    int i, sum = 0, count = 0;
+    strcpy(ptrStud->FirstName, newStud->FirstName);
+    strcat(ptrStud->FirstName, "\0");
+    strcpy(ptrStud->SecondName, newStud->SecondName);
+    strcat(ptrStud->SecondName, "\0");
+    for (i = 0; i < SUM_COURSES; i++)
     {
-        if (newStud->courses[i] > -1)
-            ptrStud->courses[i] = newStud->courses[i];
-        if (ptrStud->courses[i] > -1)
+        if (newStud->marks[i] > NOT_TESTED)
+            ptrStud->marks[i] = newStud->marks[i];
+        if (ptrStud->marks[i] > NOT_TESTED)
         {
-            caunt++;
-            sum += ptrStud->courses[i];
+            count++;
+            sum += ptrStud->marks[i];
         }
     }
-    ptrStud->average = ((float)sum / (float)caunt);
+    ptrStud->average = ((float)sum / (float)count);
 }
 
 /*return the node befor the index that is where the place to put the new node*/
-student* getIndexToInsert(student* head, student* tail, student* newStud)
+student* getIndexToInsert(studManagar* studentsManager, student* newStud)
 {
-    student* ptrCur = head, * ptrPrv = NULL;
+    student* ptrCur = studentsManager->head, * ptrPrv = NULL;
     if (ptrCur == NULL || strcmp(ptrCur->SecondName, newStud->SecondName) >= 0)
         return ptrPrv;
-    else if (strcmp( newStud->SecondName,tail->SecondName) >= 0)    
-        return tail;          
+    else if (strcmp( newStud->SecondName, studentsManager->tail->SecondName) >= 0)
+        return studentsManager->tail;
     else
     {
-        ptrPrv = head;
+        ptrPrv = studentsManager->head;
 
         while (ptrCur->next != NULL)
         {
@@ -145,22 +160,23 @@ student* getIndexToInsert(student* head, student* tail, student* newStud)
 }
 
 /*adding a node to the list by sorted*/
-void addTolist(student** head, student** tail, student* ptrPrv, student* newStud)
+void addTolist(studManagar* studentsManager, student* ptrPrv, student* newStud)
 {
     student* ptrStud;
     if (ptrPrv == NULL)
     {
-        if (*head == NULL)
+        if (studentsManager->head == NULL)
         {
-            newStud->next = *head;
-            *head = newStud;
-            *tail = newStud;
+            newStud->next = NULL;
+            studentsManager->head = newStud;
+            studentsManager->tail = newStud;
+            studentsManager->isSorted = 1;
         }
         else
-        {
-            ptrStud = newStud;
-            newStud->next = *head;
-            *head = newStud;            
+        {            
+            newStud->next = studentsManager->head;
+            studentsManager->head = newStud;
+            studentsManager->isSorted = 0;
         }
 
     }
@@ -168,106 +184,125 @@ void addTolist(student** head, student** tail, student* ptrPrv, student* newStud
     {
         if (ptrPrv->next == NULL)
         {
-            *tail = newStud;
-            newStud->next = ptrPrv->next;
+            studentsManager->tail = newStud;
+            newStud->next = NULL;
             ptrPrv->next = newStud;
+            studentsManager->isSorted = 1;
         }
         else
         {
             newStud->next = ptrPrv->next;
             ptrPrv->next = newStud;
-            ptrStud = *head;
-            while (ptrStud->next != NULL)
-                ptrStud = ptrStud->next;
-            *tail = ptrStud;
+            studentsManager->isSorted = 0;
         }
-    }
+    }    
 }
 
-void updateScor(student* newStud, student* ptrNode)
+void updateMark(student* ptrNode , student* newStud)
 {
-    int i,sum=0,caunt=0;
-    for (i = 0; i < COURSES; i++)
+    int i,sum=0,count=0;
+    for (i = 0; i < SUM_COURSES; i++)
     {
-        if (ptrNode->courses[i] > -1)
-            newStud->courses[i] = ptrNode->courses[i];
-        if (newStud->courses[i] > -1)
+        if (newStud->marks[i] > NOT_TESTED)
+            ptrNode->marks[i] = newStud->marks[i];
+        if (ptrNode->marks[i] > NOT_TESTED)
         {
-            caunt++;
-            sum += newStud->courses[i];
+            count++;
+            sum += ptrNode->marks[i];
         }
     }  
-    newStud->average = ((float)sum / (float)caunt);
-    newStud->next = NULL;
+    ptrNode->average = ((float)sum / (float)count);
 }
+
+void printError(int countRows, int checkSyntax)
+{
+    char* arrError[8] = { "the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty" };
+    int i;
+    for (i = 0; i < 8 && i < checkSyntax; i++);   
+    printf("Error in file line number %d ", countRows);
+    printf("%s\n", arrError[checkSyntax]);
+}
+
 
 /*open the file , read the data , bild the list , clos the file*/
-student* readFile(student* head, int* checkFile)
+studManagar*  readFile(char* fileName)
 {
+    FILE* fRead;
     char row[MAX_LINE];
     int checkSyntax = 0, isExist, countRows = 0;
-    student* newStud, * ptrPrv, * ptrNode, * tail = NULL;
-    FILE* fRead;
-    fRead = fopen(FILE_NAME, "rt");
+    student* newStud, * ptrPrv, * ptrNode;
+    studManagar* studentsManager;
+    studentsManager = (studManagar*)malloc(sizeof(studManagar)); 
+    studentsManager->head = NULL;
+    studentsManager->tail = NULL;
+    studentsManager->countAdded = 0;
+    studentsManager->countUpdate = 0;
+    studentsManager->countDeleted = 0;
+    studentsManager->isSorted = 0;
+    fRead = fopen(fileName, "rt");
     if (fRead == NULL)
-    {        
-        *checkFile = 1;
-        return head;
+    {            
+        printf("Cannot open the file");
+        free(studentsManager);
+        return NULL;
     }
-    if (fgetc(fRead) == EOF)
+    else if (fgetc(fRead) == EOF)
+    {        
+        printf("The file is empty");
+        free(studentsManager);
+        return NULL;
+    }
+    else
     {
-        *checkFile = 2;
-        return head;
-    }
-    do
-    {        
-        fseek(fRead, -1, SEEK_CUR);               
-        fgets(row, MAX_LINE, fRead);       
-        countRows++;
-        if (row[strlen(row) - 1] == '\n')
+        do
         {
-            row[strlen(row) - 1] = '\0';
-            checkSyntax = validationRow(row);
-            if (checkSyntax)
-                printf("error in file line number %d error number is %d", countRows, checkSyntax);
-            else
+            fseek(fRead, -1, SEEK_CUR);
+            fgets(row, MAX_LINE, fRead);
+            countRows++;
+            if (row[strlen(row) - 1] == '\n')
             {
-                
-                newStud = createNode(row); 
-                isExist = existInList(head, tail, newStud);                
-                
-                if (isExist == -1) 
+                row[strlen(row) - 1] = '\0';
+                checkSyntax = validationRow(row);
+                if (checkSyntax)                    
+                    printError(countRows, checkSyntax);
+                else
                 {
-                    printf("error in file line number %d error number is %d", countRows, isExist);
-                    freeStudent(newStud);                   
-                }
-                else if (isExist == 1)
-                {
-                    ptrNode = getPtrToNode(head, newStud);                    
-                    updateStudent(ptrNode, newStud);
-                    freeStudent(newStud);
 
-                }
-                else if (!(isExist))
-                {
-                    ptrPrv = getIndexToInsert(head, tail, newStud);
-                    addTolist(&head, &tail, ptrPrv, newStud);
+                    newStud = createNode(row);
+                    isExist = existInList(studentsManager, newStud);
+
+                    if (isExist == -1)
+                    {
+                        printError(countRows, 8);
+                        freeStudent(newStud);
+                    }
+                    else if (isExist == 1)
+                    {
+                        ptrNode = getPtrToNode(studentsManager, newStud);
+                        updateMark(ptrNode, newStud);
+                        freeStudent(newStud);
+
+                    }
+                    else if (!(isExist))
+                    {
+                        ptrPrv = getIndexToInsert(studentsManager, newStud);
+                        addTolist(studentsManager, ptrPrv, newStud);
+                    }
                 }
             }
-        }
-        else
-        {
-            while (fgetc(fRead) != '\n');
-            printf("error in file line number %d error number is %d", countRows, 2);
-        }
-    } while (fgetc(fRead) != EOF);
-    fclose(fRead);
-    printList(head);
-    return head;
+            else
+            {
+                while (fgetc(fRead) != '\n');
+                printf("error in file line number %d error number is %d", countRows, 2);
+            }
+        } while (fgetc(fRead) != EOF);
+    }    
+    fclose(fRead);    
+    return studentsManager;
 }
 
 
-int updateFile(student* head)
+int updateFile(studManagar* studentsManager)
 {
     FILE* fWrite;    
     int i;      
@@ -276,21 +311,21 @@ int updateFile(student* head)
     {        
         return 1;
     }
-    while (head != NULL)
+    while (studentsManager->head != NULL)
     {        
-        for (i = 0; i < COURSES; i++)
+        for (i = 0; i < SUM_COURSES; i++)
         {
-            if (head->courses[i] > -1)
+            if (studentsManager->head->marks[i] > NOT_TESTED)
             {
                 if (i == 0)
-                    fprintf(fWrite, "%s,%s,%s,C language,%d\n", head->FirstName, head->SecondName, head->Id, head->courses[i]);
+                    fprintf(fWrite, "%s,%s,%s,C language,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
                 else if (i == 1)
-                    fprintf(fWrite, "%s,%s,%s,Computer Networks,%d\n", head->FirstName, head->SecondName, head->Id, head->courses[i]);
+                    fprintf(fWrite, "%s,%s,%s,Computer Networks,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
                 else if (i == 2)
-                    fprintf(fWrite, "%s,%s,%s,CS Fundamentals,%d\n", head->FirstName, head->SecondName, head->Id, head->courses[i]);
+                    fprintf(fWrite, "%s,%s,%s,CS Fundamentals,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
             }
         }
-        head = head->next;
+        studentsManager->head = studentsManager->head->next;
     }
     fclose(fWrite);
     return 0;
@@ -315,28 +350,28 @@ void printNode(student* stud)
 {
     int i;
     printf("| %-8s   | %-8s     |%10s |", stud->FirstName, stud->SecondName, stud->Id);
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < SUM_COURSES; i++)
     {
-        if (stud->courses[i] > -1)
+        if (stud->marks[i] > NOT_TESTED)
         {
-            printf("         %-11d|", stud->courses[i]);
+            printf("         %-11d|", stud->marks[i]);
         }
         else
             printf("         --         |");
     }
-    if (stud->average > -1)
+    if (stud->average > NOT_TESTED)
     {
         printf(" %-8.2f  |", stud->average);
     }
     else
-        printf("      -    |");
+        printf("      --   |");
     printf("\n");
 }
 
 /*printed the list */
-void printList(student* head)
+void printList(studManagar* studentsManager)
 {
-    student* ptrStud = head;
+    student* ptrStud = studentsManager->head;
     printTitle();
     while (ptrStud != NULL)
     {
@@ -371,15 +406,16 @@ void freeStudent(student* ptrStud)
 }
 
 
-void freeList(student* head)
+void freeList(studManagar* studentsManager)
 {
     student* ptrStud;
-    while (head)
+    while (studentsManager->head)
     {
-        ptrStud = head;
-        head = head->next;
+        ptrStud = studentsManager->head;
+        studentsManager->head = studentsManager->head->next;
         freeStudent(ptrStud);        
     }    
+    free(studentsManager);
 }
 
 

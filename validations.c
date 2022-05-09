@@ -279,72 +279,63 @@ int checkAverageData(char* data)
     return 1;
 }
 
-int checkFildName(char* queryRow, char* fild,int flag)
-{
+int checkFieldName(char* queryRow, char* field,int flag)
+{    
     char* temp;
-    int index = 0, cauntChars, i = 0, j = 0, isProper = 0;
+    int index = 0, countChars, i = 0, j = 0, isProper = 0;
     while (queryRow[index] == ' ')
         index++;
-    cauntChars = index;
-    while (queryRow[cauntChars] >= 'a' && queryRow[cauntChars] <= 'z' || queryRow[cauntChars] >= 'A' && queryRow[cauntChars] <= 'Z' || queryRow[cauntChars] == ' ')
-        cauntChars++;
-    if (cauntChars == 0)
+    countChars = index;
+    while (queryRow[countChars] >= 'a' && queryRow[countChars] <= 'z' || queryRow[countChars] >= 'A' && queryRow[countChars] <= 'Z' || queryRow[countChars] == ' ')
+        countChars++;
+    if (countChars == 0)
         return 0;
-    temp = (char*)malloc(sizeof(char) * cauntChars - index + 1);
+    temp = (char*)malloc(sizeof(char) * countChars - index + 1);
     if (temp == NULL)
     {
         printf("problem in memory");
         return 0;
     }   
-    strncpy(temp, queryRow + index, cauntChars - index);
-    temp[cauntChars - index] = '\0';
+    strncpy(temp, queryRow + index, countChars - index);
+    temp[countChars - index] = '\0';
     while (temp[i] != '\0')
     {
         if (temp[i] != ' ')
         {
-            if (temp[i] >= 'A' && temp[i] <= 'Z')
-            {
-                fild[j] = tolower(temp[i]);
-                j++;
-            }
-            else
-            {
-                fild[j] = temp[i];
-                j++;
-            }
+            field[j] = temp[i];
+            j++;
         }
 
         i++;
     }
-    fild[j] = '\0';
+    field[j] = '\0';
     if (flag == 0)
     {
-        if (strcmp(fild, "firstname") != 0 && strcmp(fild, "secondname") && strcmp(fild, "id") && strcmp(fild, "clanguage") && strcmp(fild, "computernetworks") && strcmp(fild, "csfundamentals") && strcmp(fild, "average"))
+        if (strcmp(field, "firstname") != 0 && strcmp(field, "secondname") && strcmp(field, "id") && strcmp(field, "clanguage") && strcmp(field, "computernetworks") && strcmp(field, "csfundamentals") && strcmp(field, "average"))
             return 0;
     }  
     else if(flag == 1)
     {
-        if (strcmp(fild,  "firstname") != 0)
+        if (strcmp(field,  "firstname") != 0)
             return 0;
     }
     else if (flag == 2)
     {
-        if (strcmp(fild, "secondname") != 0)
+        if (strcmp(field, "secondname") != 0)
             return 0;
     }
     else if (flag == 3)
     {
-        if (strcmp(fild, "id") != 0)
+        if (strcmp(field, "id") != 0)
             return 0;
-    }
-
-    strncpy(queryRow, queryRow + cauntChars, strlen(queryRow) - cauntChars);
-    strcpy(queryRow + strlen(queryRow) - cauntChars, "\0");
+    }   
+    strcpy(queryRow, queryRow + countChars + index);
+    strcat(queryRow , "\0");    
     return 1;
 }
 
 int checkOperator(char* queryRow, char* operator,int flag)
-{
+{    
     char* temp;
     int index = 0, cauntChars, i, j,indexOfOperator = 0;
     while (queryRow[index] == ' ')
@@ -404,14 +395,15 @@ int checkOperator(char* queryRow, char* operator,int flag)
     }
     else if (strlen(operator) > 2)
         return 0;
-
-    strncpy(queryRow, queryRow + cauntChars, strlen(queryRow) - cauntChars);
-    strcpy(queryRow + strlen(queryRow) - cauntChars, "\0");
+    
+    strcpy(queryRow , queryRow + cauntChars );
+    strcat(queryRow, "\0");
+    
     return  indexOfOperator;
 }
 
-int checkData(char* queryRow, char* fild, char* data)
-{
+int checkData(char* queryRow, char* field, char* data)
+{    
     int index = 0, isProper = 0;       
     while (queryRow[index] >= 'a' && queryRow[index] <= 'z' || queryRow[index] >= 'A' && queryRow[index] <= 'Z' || queryRow[index] >= '0' && queryRow[index] <= '9' || queryRow[index] == '-' || queryRow[index] == ' ' || queryRow[index] == '.')
         index++;   
@@ -424,13 +416,13 @@ int checkData(char* queryRow, char* fild, char* data)
         index--;
         data[index] = '\0';
     }           
-    if (strcmp(fild, "firstname") == 0 || strcmp(fild, "secondname") == 0)
+    if (strcmp(field, "firstname") == 0 || strcmp(field, "secondname") == 0)
         isProper = checkNamesData(data);
-    else if (strcmp(fild, "id") == 0)
+    else if (strcmp(field, "id") == 0)
         isProper = checkIdData(data);       
-    else if (strcmp(fild, "clanguage") == 0 || strcmp(fild, "computernetworks") == 0 || strcmp(fild, "csfundamentals") == 0 )
+    else if (strcmp(field, "clanguage") == 0 || strcmp(field, "computernetworks") == 0 || strcmp(field, "csfundamentals") == 0 )
         isProper = checkScoresData(data);
-    else if (strcmp(fild, "average") == 0)
+    else if (strcmp(field, "average") == 0)
         isProper = checkAverageData(data);
        
     return isProper;
@@ -486,20 +478,18 @@ int validationRow(char* Row)
 }
 
 /*return 0 if the quety is not good and 1 if the is good*/
-int validetionSelectQuery(char* queryRow, char* fild, char* operator, char* data, int flag)
-{
-
+int validetionSelectQuery(char* queryRow, char* field, char* operator, char* data, int flag)
+{    
     int index = 0, isProper = 0;
     while (queryRow[index] == ' ')
         index++;
-    isProper = checkFildName(queryRow + index, fild, flag);
+    isProper = checkFieldName(queryRow + index, field, flag);      
+    if (!isProper)
+        return isProper;    
+    isProper = checkOperator(queryRow, operator,flag);      
     if (!isProper)
         return isProper;
-    isProper = checkOperator(queryRow, operator,flag);
-    if (!isProper)
-        return isProper;
-    isProper = checkData(queryRow, fild, data);
-
+    isProper = checkData(queryRow, field, data);    
     return isProper;
 }
 

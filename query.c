@@ -17,45 +17,47 @@ student* getIndexToInsertQuery(student* head, student* ptrNode)
 	return ptrCur;
 }
 
-void addTolistQuery(student** head, student* ptrPrv, student* newStud)
+void addTolistQuery(studManagar* studentsManager, student* ptrPrv, student* newStud)
 {
 
 	if (ptrPrv == NULL)
 	{
-		newStud->next = *head;
-		*head = newStud;
+		newStud->next = studentsManager->head;
+		studentsManager->head = newStud;
 	}
 	else
 	{
 		newStud->next = ptrPrv->next;
 		ptrPrv->next = newStud;
+		if (newStud->next == NULL)
+			studentsManager->tail = newStud;
 	}
 
 }
 
-void updateStudentQuery(student** head, student* ptrNode, student* newStud)
+void updateStudentQuery(studManagar* studentsManager, student* ptrNode, student* newStud)
 {
-	student* ptrPrv;
-	if ((*head)->next == NULL)
+	student* ptrPrv;	
+	if (studentsManager->head->next == NULL)
 	{
-		updateStudent((*head), newStud);
+		updateStudent(studentsManager->head, newStud);
 	}
 	else
 	{
-		ptrPrv = getIndexToInsertQuery((*head), ptrNode);
-		if (ptrNode == (*head))
+		ptrPrv = getIndexToInsertQuery(studentsManager->head, ptrNode);
+		if (ptrNode == studentsManager->head)
 		{
-			(*head) = (*head)->next;
-			updateScor(ptrNode, newStud);
-			ptrPrv = getIndexToInsertQuery((*head), newStud);
-			addTolistQuery(head, ptrPrv, newStud);
+			studentsManager->head = studentsManager->head->next;
+			updateStudent(ptrNode, newStud);
+			ptrPrv = getIndexToInsertQuery(studentsManager->head, ptrNode);
+			addTolistQuery(studentsManager, ptrPrv, ptrNode);
 		}
 		else
 		{
 			ptrPrv->next = ptrNode->next;
-			updateScor(ptrNode, newStud);
-			ptrPrv = getIndexToInsertQuery((*head), newStud);
-			addTolistQuery(head, ptrPrv, newStud);
+			updateStudent(ptrNode, newStud);
+			ptrPrv = getIndexToInsertQuery(studentsManager->head, ptrNode);
+			addTolistQuery(studentsManager, ptrPrv, ptrNode);
 		}
 	}
 }
@@ -222,27 +224,27 @@ int select_clanguage(student* head, int operator, char* data)
 		switch (operator)
 		{
 		case equal:
-			if (ptrStud->courses[0] == atoi(data))
+			if (ptrStud->marks[0] == atoi(data))
 				toPrint = 1;
 			break;
 		case bigger:
-			if (ptrStud->courses[0] > atoi(data))
+			if (ptrStud->marks[0] > atoi(data))
 				toPrint = 1;
 			break;
 		case smaller:
-			if (ptrStud->courses[0] < atoi(data))
+			if (ptrStud->marks[0] < atoi(data))
 				toPrint = 1;
 			break;
 		case biggerEqual:
-			if (ptrStud->courses[0] >= atoi(data))
+			if (ptrStud->marks[0] >= atoi(data))
 				toPrint = 1;
 			break;
 		case smallerEqual:
-			if (ptrStud->courses[0] <= atoi(data))
+			if (ptrStud->marks[0] <= atoi(data))
 				toPrint = 1;
 			break;
 		case notEqual:
-			if (ptrStud->courses[0] != atoi(data))
+			if (ptrStud->marks[0] != atoi(data))
 				toPrint = 1;
 			break;
 		}
@@ -273,27 +275,27 @@ int select_computernetworks(student* head, int operator, char* data) {
 		switch (operator)
 		{
 		case equal:
-			if (ptrStud->courses[1] == atoi(data))
+			if (ptrStud->marks[1] == atoi(data))
 				toPrint = 1;
 			break;
 		case bigger:
-			if (ptrStud->courses[1] > atoi(data))
+			if (ptrStud->marks[1] > atoi(data))
 				toPrint = 1;
 			break;
 		case smaller:
-			if (ptrStud->courses[1] < atoi(data))
+			if (ptrStud->marks[1] < atoi(data))
 				toPrint = 1;
 			break;
 		case biggerEqual:
-			if (ptrStud->courses[1] >= atoi(data))
+			if (ptrStud->marks[1] >= atoi(data))
 				toPrint = 1;
 			break;
 		case smallerEqual:
-			if (ptrStud->courses[1] <= atoi(data))
+			if (ptrStud->marks[1] <= atoi(data))
 				toPrint = 1;
 			break;
 		case notEqual:
-			if (ptrStud->courses[1] != atoi(data))
+			if (ptrStud->marks[1] != atoi(data))
 				toPrint = 1;
 			break;
 		}
@@ -324,27 +326,27 @@ int select_csfundamentals(student* head, int operator, char* data) {
 		switch (operator)
 		{
 		case equal:
-			if (ptrStud->courses[2] == atoi(data))
+			if (ptrStud->marks[2] == atoi(data))
 				toPrint = 1;
 			break;
 		case bigger:
-			if (ptrStud->courses[2] > atoi(data))
+			if (ptrStud->marks[2] > atoi(data))
 				toPrint = 1;
 			break;
 		case smaller:
-			if (ptrStud->courses[2] < atoi(data))
+			if (ptrStud->marks[2] < atoi(data))
 				toPrint = 1;
 			break;
 		case biggerEqual:
-			if (ptrStud->courses[2] >= atoi(data))
+			if (ptrStud->marks[2] >= atoi(data))
 				toPrint = 1;
 			break;
 		case smallerEqual:
-			if (ptrStud->courses[2] <= atoi(data))
+			if (ptrStud->marks[2] <= atoi(data))
 				toPrint = 1;
 			break;
 		case notEqual:
-			if (ptrStud->courses[2] != atoi(data))
+			if (ptrStud->marks[2] != atoi(data))
 				toPrint = 1;
 			break;
 		}
@@ -430,9 +432,9 @@ int select_average(student* head, int operator, char* data) {
 	return isFind;
 }
 
-int genericSelect(student* head, int field, int operator,void* data)
+int genericSelect(studManagar* studentsManager, int field, int operator,void* data)
 {
-	student* ptrStud = head;
+	student* ptrStud = studentsManager->head;
 	switch (field)
 	{
 	case firstname:
@@ -464,38 +466,48 @@ int genericSelect(student* head, int field, int operator,void* data)
 void printMenu()
 {
 	printf("    to querying the system enter select and the query sentence\n\n");
-	printf("    (select firstName = beni)\n\n");
+	printf("    select firstName = beni\n\n");
 	printf("    to update or insert data enter set and the data\n\n");
-	printf("    (set firstName = dani, secondName = haham, id = 111222333, clanguage = 45)\n\n");
+	printf("    set firstName = dani, secondName = haham, id = 111222333, clanguage = 45\n\n");
 	printf("    to delete a student enter deleteand the id\n\n");
-	printf("    (delete id = 111222333)\n\n");
+	printf("    delete id = 111222333\n\n");
 	printf("    to print the data enter print\n\n");
 	printf("    to print the menu enter menu\n\n");
-	printf("    to exit enter quit");
+	printf("    to exit enter quit\n");
 }
 
-void deleteStudent(student** head, char* data)
+void deleteStudent(studManagar* studentsManager, char* data)
 {
-	student* ptrCur = (*head),*ptrPrv;
+	student* ptrCur = studentsManager->head,*ptrPrv;
 	if (strcmp(ptrCur->Id, data) == 0)
 	{
-		(*head) = (*head)->next;
-		freeStudent(ptrCur);
-	}
-	do
-	{
-		ptrPrv = ptrCur;
-		ptrCur = ptrCur->next;
-		if (strcmp(ptrCur->Id, data) == 0)
+		if (ptrCur->next == NULL)
+			freeList(studentsManager);
+		else
 		{
-			ptrPrv->next = ptrCur->next;
+			studentsManager->head = studentsManager->head->next;
 			freeStudent(ptrCur);
-			break;
-		}
-	} while (ptrCur->next != NULL);			
+		}		
+	}
+	else
+	{
+		do
+		{
+			ptrPrv = ptrCur;
+			ptrCur = ptrCur->next;
+			if (strcmp(ptrCur->Id, data) == 0)
+			{
+				ptrPrv->next = ptrCur->next;
+				freeStudent(ptrCur);
+				if (ptrPrv->next == NULL)
+					studentsManager->tail = ptrPrv;
+				break;
+			}
+		} while (ptrCur->next != NULL);
+	}			
 }
 
-void runQueries(student* head)
+void runQueries(studManagar* studentsManager)
 {
     int chackOpenFile=0;
     char queryLine[MAX_LINE];
@@ -504,29 +516,30 @@ void runQueries(student* head)
     {
         printf("\n  ->  ");
         gets(queryLine);
-    } while (checkQuery(queryLine, &head));
-    chackOpenFile = updateFile(head);
-	freeList(head);	
-    if (chackOpenFile)
-    {
-        printf("cannot open the file to update");
-        exit(1);        
-    }
+    } while (checkQuery(queryLine, studentsManager));
+	if (studentsManager->isSorted == 0 || studentsManager->countDeleted > 0 || studentsManager->countAdded > 0 || studentsManager->countUpdate > 0)
+	{		
+		chackOpenFile = updateFile(studentsManager);
+		if (chackOpenFile)
+		{
+			printf("cannot open the file to update");
+			exit(1);
+		}
+	}    
 }
 
-int checkQuery(char* queryRow, student** head)
+int checkQuery(char* queryRow, studManagar* studentsManager)
 {	
 	char* token, field[20], operator[3], data[50], * line;
     int index = 0, range, fieldId , operatorId , isFind = 0, checkSyntax, isExist, checkQuery;
-    student* newList[10] = { NULL }, * newStud, * ptrNode, * ptrPrv,*tail=NULL;
+    student*  newStud, * ptrNode, * ptrPrv;
     
 	while (queryRow[index] != '\0')
 	{
 		if (queryRow[index] >= 'A' && queryRow[index] <= 'Z')
 			queryRow[index] += 32;
 		index++;
-	}
-		index++;
+	}		
 	index = 0;
     while (queryRow[index] == ' ')
         index++;
@@ -536,7 +549,7 @@ int checkQuery(char* queryRow, student** head)
     else if (strncmp(queryRow + index, "print", 5) == 0)
 	{				
         printf("\n");
-        printList((*head));
+        printList(studentsManager);
         return 1;
     }
     else if (strncmp(queryRow + index, "select", 6) == 0)
@@ -545,7 +558,7 @@ int checkQuery(char* queryRow, student** head)
         if (checkQuery)
         {                       
 			getId(field, operator,&fieldId,& operatorId);			
-            isFind = genericSelect((*head), fieldId, operatorId, data);
+            isFind = genericSelect(studentsManager, fieldId, operatorId, data);
             if (!isFind)
                 printf("\n  Not found students were like to the query\n\n");                
         }
@@ -558,18 +571,20 @@ int checkQuery(char* queryRow, student** head)
         checkQuery = validationSetQuery(queryRow + index + 3);
         if (checkQuery)
         {            
-            newStud = createNode(queryRow +3);
-            isExist = existInList((*head),tail, newStud);
+            newStud = createNode(queryRow + index +3);			
+            isExist = existInList(studentsManager, newStud);
             if (isExist)
             {
-                ptrNode = getPtrToNode((*head), newStud);
-                updateStudentQuery(head, ptrNode, newStud);
+                ptrNode = getPtrToNode(studentsManager, newStud);
+                updateStudentQuery(studentsManager, ptrNode, newStud);
+				studentsManager->countUpdate++;
                 printf("     update student successful");               
             }
             else
             {
-                ptrPrv = getIndexToInsertQuery((*head), newStud);
-                addTolistQuery(head, ptrPrv, newStud);
+                ptrPrv = getIndexToInsertQuery(studentsManager->head, newStud);
+                addTolistQuery(studentsManager, ptrPrv, newStud);
+				studentsManager->countAdded++;
                 printf("     insert student successful");
             }           
         }
@@ -583,10 +598,11 @@ int checkQuery(char* queryRow, student** head)
 		checkQuery = validationDeleteQuery(queryRow + index + 6, data);
 		if (checkQuery)
 		{
-			isExist = ExistToDelete((*head), data);
+			isExist = ExistToDelete(studentsManager->head, data);
 			if (isExist)
 			{
-				deleteStudent(head, data);
+				deleteStudent(studentsManager, data);
+				studentsManager->countDeleted++;
 				printf("     delete student successful");
 			}
 			else

@@ -1,12 +1,14 @@
 #include "main.h"
 
 
-student* getIndexToInsertQuery(student* head, student* ptrNode)
+/*return a pointer to the node that before the place of this student
+  if the list is empty or the place if before the head return NULL*/
+student* getIndexToInsertQuery(studManagar* studentsManager, student* ptrNode)
 {
-	student* ptrPrv = NULL, * ptrCur = head;
+	student* ptrPrv = NULL, * ptrCur = studentsManager->head;
 	if (ptrCur == NULL || strcmp(ptrCur->SecondName, ptrNode->SecondName) >= 0)
 		return ptrPrv;
-	ptrPrv = head;
+	ptrPrv = studentsManager->head;
 	while (ptrCur->next != NULL)
 	{
 		ptrPrv = ptrCur;
@@ -17,6 +19,7 @@ student* getIndexToInsertQuery(student* head, student* ptrNode)
 	return ptrCur;
 }
 
+/*adding a student to the list by sorted*/
 void addTolistQuery(studManagar* studentsManager, student* ptrPrv, student* newStud)
 {
 
@@ -35,6 +38,8 @@ void addTolistQuery(studManagar* studentsManager, student* ptrPrv, student* newS
 
 }
 
+/*update the value of the student
+  and re sorted the list*/
 void updateStudentQuery(studManagar* studentsManager, student* ptrNode, student* newStud)
 {
 	student* ptrPrv;	
@@ -62,6 +67,7 @@ void updateStudentQuery(studManagar* studentsManager, student* ptrNode, student*
 	}
 }
 
+/*select and print the students by firstName field*/
 int select_firstname(student* head, int operator, char* data) {
 	student* ptrStud = head;
 	int isFirst = 0, toPrint = 0, isFind = 0;
@@ -113,6 +119,7 @@ int select_firstname(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/*select and print the students by secodName field*/
 int select_secondname(student* head, int operator, char* data) {
 	student* ptrStud = head;
 	int isFirst = 0, toPrint = 0, isFind = 0;
@@ -164,6 +171,7 @@ int select_secondname(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/*select and print the students by id field*/
 int select_id(student* head, int operator, char* data) {	
 	student* ptrStud = head;
 	int isFirst = 0, toPrint = 0, isFind = 0;
@@ -215,6 +223,7 @@ int select_id(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/*select and print the students by C Language field*/
 int select_clanguage(student* head, int operator, char* data) 
 {	
 	student* ptrStud = head;
@@ -267,6 +276,7 @@ int select_clanguage(student* head, int operator, char* data)
 	return isFind;
 }
 
+/*select and print the students by ComputerNetworks field*/
 int select_computernetworks(student* head, int operator, char* data) {
 	student* ptrStud = head;
 	int isFirst = 0, toPrint = 0, isFind = 0;
@@ -318,6 +328,7 @@ int select_computernetworks(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/*select and print the students by CS Fundamentals field*/
 int select_csfundamentals(student* head, int operator, char* data) {
 	student* ptrStud = head;
 	int isFirst = 0, toPrint = 0, isFind = 0;
@@ -369,6 +380,7 @@ int select_csfundamentals(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/*select and print the students by average field*/
 int select_average(student* head, int operator, char* data) {
 	student* ptrStud = head;	
 	int isFirst = 0, toPrint = 0, isFind = 0,i=0,isPoint = 0;
@@ -432,6 +444,7 @@ int select_average(student* head, int operator, char* data) {
 	return isFind;
 }
 
+/**/
 int genericSelect(studManagar* studentsManager, int field, int operator,void* data)
 {
 	student* ptrStud = studentsManager->head;
@@ -463,6 +476,7 @@ int genericSelect(studManagar* studentsManager, int field, int operator,void* da
 	return 0;
 }
 
+/**/
 void printMenu()
 {
 	printf("    to querying the system enter select and the query sentence\n\n");
@@ -476,6 +490,7 @@ void printMenu()
 	printf("    to exit enter quit\n");
 }
 
+/*remove a student from the list*/
 void deleteStudent(studManagar* studentsManager, char* data)
 {
 	student* ptrCur = studentsManager->head,*ptrPrv;
@@ -507,10 +522,11 @@ void deleteStudent(studManagar* studentsManager, char* data)
 	}			
 }
 
+/**/
 void runQueries(studManagar* studentsManager)
 {
     int chackOpenFile=0;
-    char queryLine[MAX_LINE];
+    char queryLine[MAX_ROW];
 	printMenu();
     do
     {
@@ -528,6 +544,7 @@ void runQueries(studManagar* studentsManager)
 	}    
 }
 
+/**/
 int checkQuery(char* queryRow, studManagar* studentsManager)
 {	
 	char* token, field[20], operator[3], data[50], * line;
@@ -571,7 +588,7 @@ int checkQuery(char* queryRow, studManagar* studentsManager)
         checkQuery = validationSetQuery(queryRow + index + 3);
         if (checkQuery)
         {            
-            newStud = createNode(queryRow + index +3);			
+            newStud = createStudent(queryRow + index +3);
             isExist = existInList(studentsManager, newStud);
             if (isExist)
             {
@@ -582,7 +599,7 @@ int checkQuery(char* queryRow, studManagar* studentsManager)
             }
             else
             {
-                ptrPrv = getIndexToInsertQuery(studentsManager->head, newStud);
+                ptrPrv = getIndexToInsertQuery(studentsManager, newStud);
                 addTolistQuery(studentsManager, ptrPrv, newStud);
 				studentsManager->countAdded++;
                 printf("     insert student successful");

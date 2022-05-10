@@ -7,7 +7,7 @@ typedef enum {
 } enumOperators;
 
 
-student* getIndexToInsertQuery(student* head, student* ptrNode);
+student* getIndexToInsertQuery(studManagar* studentsManager, student* ptrNode);
 void addTolistQuery(studManagar* studentsManager, student* ptrPrv, student* newStud);
 void updateStudentQuery(studManagar* studentsManager, student* ptrNode, student* newStud);
 int select_firstname(student* head, int operator, char* data);

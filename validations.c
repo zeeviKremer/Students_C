@@ -120,6 +120,7 @@ int isScore(char* line)
     return rez;
 }
 
+/**/
 int checkNamesData(char* data)
 {
     int i = 0;
@@ -132,6 +133,7 @@ int checkNamesData(char* data)
     return 1;
 }
 
+/**/
 int checkIdData(char* data)
 {   
     int i = 0 , caunt = 0;
@@ -147,6 +149,7 @@ int checkIdData(char* data)
     return 1;
 }
 
+/**/
 int checkScoresData(char* data)
 {
     int i = 0, scor, countDigits = 0;
@@ -198,6 +201,7 @@ int checkScoresData(char* data)
     return 1;
 }
 
+/**/
 int checkAverageData(char* data)
 {   
     int i = 0, sumBeforePoint, sumAfterPoint, countDigitsBefore = 0, countDigitsAfter = 0, countPoints = 0;
@@ -279,6 +283,7 @@ int checkAverageData(char* data)
     return 1;
 }
 
+/**/
 int checkFieldName(char* queryRow, char* field,int flag)
 {    
     char* temp;
@@ -334,6 +339,7 @@ int checkFieldName(char* queryRow, char* field,int flag)
     return 1;
 }
 
+/**/
 int checkOperator(char* queryRow, char* operator,int flag)
 {    
     char* temp;
@@ -402,6 +408,7 @@ int checkOperator(char* queryRow, char* operator,int flag)
     return  indexOfOperator;
 }
 
+/**/
 int checkData(char* queryRow, char* field, char* data)
 {    
     int index = 0, isProper = 0;       
@@ -477,7 +484,7 @@ int validationRow(char* Row)
     return rez;
 }
 
-/*return 0 if the quety is not good and 1 if the is good*/
+/*return 0 if the quety is not good and 1 if thet is good*/
 int validetionSelectQuery(char* queryRow, char* field, char* operator, char* data, int flag)
 {    
     int index = 0, isProper = 0;
@@ -546,6 +553,7 @@ int validationSetQuery(char* queryRow)
     return 1;        
 }
 
+/**/
 int validationDeleteQuery(char* queryRow,char* data)
 {
     int index , rez;

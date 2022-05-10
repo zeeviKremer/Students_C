@@ -3,7 +3,7 @@
 
 
 /*create a new node , insert the valeu , return a ponter to the node*/
-student* createNode(char* row)
+student* createStudent(char* row)
 {    
     char* token;
     student* newStude;
@@ -63,8 +63,8 @@ student* createNode(char* row)
     return newStude;
 }
 
-/*return 1 if the student is exist in the list or 0 if thet not exist in the list
- or -1 if exist a student with tis id and firstName or secondName is different*/
+/*return 1 if the student is exist in the list , return 0 if thet not exist in the list
+ return -1 if exist a student with tis ID but firstName or secondName is different*/
 int existInList(studManagar* studentsManager, student* stud)
 {   
     student* ptr = studentsManager->head;
@@ -114,7 +114,7 @@ student* getPtrToNode(studManagar* studentsManager, student* newStud)
     return ptr;
 }
 
-/*update the olde Student from the new student*/
+/*update the value of the student*/
 void updateStudent(student* ptrStud, student* newStud)
 {
     
@@ -136,7 +136,9 @@ void updateStudent(student* ptrStud, student* newStud)
     ptrStud->average = ((float)sum / (float)count);
 }
 
-/*return the node befor the index that is where the place to put the new node*/
+/*return a pointer to the node that before the place of this student
+  check if the place is efter the last student in the list
+  if the list is empty or the place if before the head return NULL*/
 student* getIndexToInsert(studManagar* studentsManager, student* newStud)
 {
     student* ptrCur = studentsManager->head, * ptrPrv = NULL;
@@ -159,7 +161,8 @@ student* getIndexToInsert(studManagar* studentsManager, student* newStud)
     }
 }
 
-/*adding a node to the list by sorted*/
+/*adding a student to the list by sorted
+  check if the file is sorted*/
 void addTolist(studManagar* studentsManager, student* ptrPrv, student* newStud)
 {
     student* ptrStud;
@@ -198,6 +201,7 @@ void addTolist(studManagar* studentsManager, student* ptrPrv, student* newStud)
     }    
 }
 
+/*update the marks of the student*/
 void updateMark(student* ptrNode , student* newStud)
 {
     int i,sum=0,count=0;
@@ -214,25 +218,20 @@ void updateMark(student* ptrNode , student* newStud)
     ptrNode->average = ((float)sum / (float)count);
 }
 
-void printError(int countRows, int checkSyntax)
-{
-    char* arrError[8] = { "the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty" };
-    int i;
-    for (i = 0; i < 8 && i < checkSyntax; i++);   
-    printf("Error in file line number %d ", countRows);
-    printf("%s\n", arrError[checkSyntax]);
-}
-
-
-/*open the file , read the data , bild the list , clos the file*/
+/*opening the file , read the value , bild the list , closing the file*/
 studManagar*  readFile(char* fileName)
 {
     FILE* fRead;
-    char row[MAX_LINE];
+    char row[MAX_ROW];
     int checkSyntax = 0, isExist, countRows = 0;
     student* newStud, * ptrPrv, * ptrNode;
     studManagar* studentsManager;
-    studentsManager = (studManagar*)malloc(sizeof(studManagar)); 
+    studentsManager = (studManagar*)malloc(sizeof(studManagar));
+    if (studentsManager == NULL)
+    {
+        printf(MOMORY_ERROR);
+        return NULL;
+    }
     studentsManager->head = NULL;
     studentsManager->tail = NULL;
     studentsManager->countAdded = 0;
@@ -242,13 +241,13 @@ studManagar*  readFile(char* fileName)
     fRead = fopen(fileName, "rt");
     if (fRead == NULL)
     {            
-        printf("Cannot open the file");
+        printf(OPEN_FILE_ERROR);
         free(studentsManager);
         return NULL;
     }
     else if (fgetc(fRead) == EOF)
     {        
-        printf("The file is empty");
+        printf(EMPTY_FILE);
         free(studentsManager);
         return NULL;
     }
@@ -257,7 +256,7 @@ studManagar*  readFile(char* fileName)
         do
         {
             fseek(fRead, -1, SEEK_CUR);
-            fgets(row, MAX_LINE, fRead);
+            fgets(row, MAX_ROW, fRead);
             countRows++;
             if (row[strlen(row) - 1] == '\n')
             {
@@ -268,7 +267,7 @@ studManagar*  readFile(char* fileName)
                 else
                 {
 
-                    newStud = createNode(row);
+                    newStud = createStudent(row);
                     isExist = existInList(studentsManager, newStud);
 
                     if (isExist == -1)
@@ -293,7 +292,7 @@ studManagar*  readFile(char* fileName)
             else
             {
                 while (fgetc(fRead) != '\n');
-                printf("error in file line number %d error number is %d", countRows, 2);
+                printf(ROW_TOO_LONG(countRows));
             }
         } while (fgetc(fRead) != EOF);
     }    
@@ -301,7 +300,7 @@ studManagar*  readFile(char* fileName)
     return studentsManager;
 }
 
-
+/*opening the file , rewrite the student list , closing the file*/
 int updateFile(studManagar* studentsManager)
 {
     FILE* fWrite;    
@@ -331,8 +330,17 @@ int updateFile(studManagar* studentsManager)
     return 0;
 }
 
+/*print a error message and What row in file is the error*/
+void printError(int countRows, int checkSyntax)
+{
+    char* arrError[8] = { "the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty","the row is empty" };
+    int i;
+    for (i = 0; i < 8 && i < checkSyntax; i++);
+    printf("Error in file line number %d ", countRows);
+    printf("%s\n", arrError[checkSyntax]);
+}
 
-/*ptinted thr fildNames*/
+/*ptint thr field Names*/
 void printTitle()
 {
     printf("\n+------------+--------------+-----------+--------------------+--------------------+--------------------+-----------+\n");    
@@ -340,12 +348,13 @@ void printTitle()
       printf("+------------+--------------+-----------+--------------------+--------------------+--------------------+-----------+\n");
 }
 
+/*ptint thr Futer*/
 void printFuter()
 {
     printf("+------------+--------------+-----------+--------------------+--------------------+--------------------+-----------+\n\n");
 }
 
-/*printed one node */
+/*print one node */
 void printNode(student* stud)
 {
     int i;
@@ -368,7 +377,7 @@ void printNode(student* stud)
     printf("\n");
 }
 
-/*printed the list */
+/*print the list */
 void printList(studManagar* studentsManager)
 {
     student* ptrStud = studentsManager->head;
@@ -381,6 +390,7 @@ void printList(studManagar* studentsManager)
     printFuter();
 }
 
+/**/
 void getId(char* field, char* operator,int* fieldId, int* operatorId)
 {       
     int arrFields[7] = { "firstname", "secondname", "id", "clanguage", "computernetworks", "csfundamentals", "average" }, arrOperators[6] = { "=", ">", "<", ">=", "<=", "!=" };
@@ -397,7 +407,7 @@ void getId(char* field, char* operator,int* fieldId, int* operatorId)
     }    
 }
 
-
+/*free memory of one student*/
 void freeStudent(student* ptrStud)
 {
     free(ptrStud->FirstName);
@@ -405,7 +415,7 @@ void freeStudent(student* ptrStud)
     free(ptrStud);
 }
 
-
+/*free memory of the list*/
 void freeList(studManagar* studentsManager)
 {
     student* ptrStud;
@@ -418,7 +428,7 @@ void freeList(studManagar* studentsManager)
     free(studentsManager);
 }
 
-
+/**/
 int ExistToDelete(student* head, char* data)
 {
     student* ptrStud = head;

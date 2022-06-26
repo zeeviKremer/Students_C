@@ -114,7 +114,7 @@ int select_firstname(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -166,7 +166,7 @@ int select_secondname(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -218,7 +218,7 @@ int select_id(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -271,7 +271,7 @@ int select_clanguage(student* head, int operator, char* data)
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -323,7 +323,7 @@ int select_computernetworks(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -375,7 +375,7 @@ int select_csfundamentals(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }
@@ -439,7 +439,7 @@ int select_average(student* head, int operator, char* data) {
 		ptrStud = ptrStud->next;
 	}
 	if (isFirst)
-		printFuter();
+		printFooter();
 
 	return isFind;
 }

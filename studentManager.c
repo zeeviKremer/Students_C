@@ -303,7 +303,8 @@ studManagar*  readFile(char* fileName)
 /*opening the file , rewrite the student list , closing the file*/
 int updateFile(studManagar* studentsManager)
 {
-    FILE* fWrite;    
+    FILE* fWrite;
+    char courses[3][20] = {"C language","Computer Networks","CS Fundamentals"};
     int i;      
     fWrite = fopen(FILE_NAME, "w+");
     if (fWrite == NULL)
@@ -315,13 +316,8 @@ int updateFile(studManagar* studentsManager)
         for (i = 0; i < SUM_COURSES; i++)
         {
             if (studentsManager->head->marks[i] > NOT_TESTED)
-            {
-                if (i == 0)
-                    fprintf(fWrite, "%s,%s,%s,C language,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
-                else if (i == 1)
-                    fprintf(fWrite, "%s,%s,%s,Computer Networks,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
-                else if (i == 2)
-                    fprintf(fWrite, "%s,%s,%s,CS Fundamentals,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, studentsManager->head->marks[i]);
+            {               
+                    fprintf(fWrite, "%s,%s,%s,%s,%d\n", studentsManager->head->FirstName, studentsManager->head->SecondName, studentsManager->head->Id, courses[i], studentsManager->head->marks[i]);
             }
         }
         studentsManager->head = studentsManager->head->next;

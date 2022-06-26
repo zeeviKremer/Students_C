@@ -48,7 +48,7 @@ studManagar* readFile(char* fileName);
 int updateFile(studManagar* studentsManager);
 void printError(int countRows, int checkSyntax);
 void printTitle();
-void printFuter();
+void printFooter();
 void printNode(student* stud);
 void printList(studManagar* studentsManager);
 void getId(char* field,char* operator,int* fieldId, int* operatorId);

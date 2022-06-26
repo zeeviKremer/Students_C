@@ -348,7 +348,7 @@ void printTitle()
       printf("+------------+--------------+-----------+--------------------+--------------------+--------------------+-----------+\n");
 }
 
-/*ptint thr Futer*/
+/*ptint thr Footer*/
 void printFuter()
 {
     printf("+------------+--------------+-----------+--------------------+--------------------+--------------------+-----------+\n\n");
@@ -387,7 +387,7 @@ void printList(studManagar* studentsManager)
         printNode(ptrStud);
         ptrStud = ptrStud->next;
     }
-    printFuter();
+    printFooter();
 }
 
 /**/
